@@ -1,7 +1,22 @@
 #!/bin/bash
 
-SPARK_CMD="$HOME/spark-ec2 -k spark_test -i $HOME/spark_test.pem"
+### local settings
+SPARKEC2_SCRIPT="$SPARK_HOME/ec2/spark-ec2"
+EC2_KEYPAIR="spark_test"
+EC2_KEY_FILE="$HOME/spark_test.pem"
 
-$SPARK_CMD -s 20 -t c3.2xlarge --hadoop-major-version 2 —no-ganglia launch bakeoff
-$SPARK_CMD --main-class PageNumberRank --app-jar --app-args "s3n://$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY@aws-publicdatasets/common-crawl/crawl-data/CC-MAIN-2014-35/segments/1408500800168.29/wet/CC-MAIN-20140820021320-000*.gz" submit bakeoff
-$SPARK_CMD --delete-groups destroy bakeoff
+### spark cluster settings
+CLUSTER_NAME="cluster1"
+SLAVE_NUM="1"
+EC2_TYPE="m3.medium"
+
+### spark app settings
+SPARK_APP_JAR="YOUR_SPARK_JAR_FILE"
+MAIN_CLASS="MAIN_CLASS_OF_SPARK_JAR"
+SPARK_APP_ARGS=""
+
+SPARKEC2="$SPARKEC2_SCRIPT -k $EC2_KEYPAIR -i $EC2_KEY_FILE"
+
+#$SPARKEC2 -s $SLAVE_NUM -t $EC2_TYPE --hadoop-major-version 2 --no-ganglia launch $CLUSTER_NAME
+$SPARKEC2 --main-class $MAIN_CLASS --app-jar $SPARK_APP_JAR --app-args $SPARK_APP_ARGS submit $CLUSTER_NAME
+$SPARKEC2 --delete-groups destroy $CLUSTER_NAME

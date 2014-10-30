@@ -18,7 +18,7 @@ object CommonCrawlData {
       }
     })
     val hostPageNum = hosts.countByValue
-    val rank = sc.parallelize(hostPageNum.toSeq).sortBy(_._2 * -1)
+    val rank = hostPageNum.toSeq.sortBy(_._2 * -1)
 
     rank.foreach(x => {
       println(s"${x._1},${x._2}")
